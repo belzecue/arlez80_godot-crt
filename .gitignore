@@ -1,0 +1,7 @@
+.dropbox.attr
+Thumbs.db
+.import/*
+*.import
+happy.png
+walk.png
+Test.tscn
