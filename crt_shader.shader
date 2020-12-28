@@ -26,20 +26,21 @@ void fragment( )
 	// ガラスの曲がり具合
 	vec2 crt_curve_shift = ( vec2( 1.0, 1.0 ) - sin( UV.yx * PI ) ) * crt_curve;
 	vec2 crt_curve_scale = vec2( 1.0, 1.0 ) + crt_curve_shift * 2.0;
+	vec2 texture_fixed_uv = UV * crt_curve_scale - crt_curve_shift;
 	vec2 fixed_uv = SCREEN_UV * crt_curve_scale - crt_curve_shift;
-	vec2 display_uv = UV * crt_curve_scale - crt_curve_shift;
-	float enable_color = float( 0.0 <= display_uv.x && display_uv.x <= 1.0 && 0.0 <= display_uv.y && display_uv.y <= 1.0 );
+	// 範囲外を消す
+	float enable_color = float( 0.0 <= texture_fixed_uv.x && texture_fixed_uv.x <= 1.0 && 0.0 <= texture_fixed_uv.y && texture_fixed_uv.y <= 1.0 );
 
-	// RFスイッチ的ノイズ
-	COLOR = (
+	// ガラスの曲がり具合から元色を取得 + RFスイッチ的ブラー
+	COLOR.rgb = (
 		(
-			texture( SCREEN_TEXTURE, fixed_uv )
+			texture( SCREEN_TEXTURE, fixed_uv ).rgb
 		*	( 1.0 - rf_switch_esque_blur * 0.5 )
 		)
 	+	(
 			(
-				texture( SCREEN_TEXTURE, fixed_uv + vec2( -SCREEN_PIXEL_SIZE.x * 3.1, 0.0 ) )
-			+	texture( SCREEN_TEXTURE, fixed_uv + vec2( SCREEN_PIXEL_SIZE.x * 3.1, 0.0 ) )
+				texture( SCREEN_TEXTURE, fixed_uv + vec2( -SCREEN_PIXEL_SIZE.x * 3.1, 0.0 ) ).rgb
+			+	texture( SCREEN_TEXTURE, fixed_uv + vec2( SCREEN_PIXEL_SIZE.x * 3.1, 0.0 ) ).rgb
 			)
 			*	( rf_switch_esque_blur * 0.25 )	// （RFノイズ）0.5 * （テクスチャから読んだ2箇所を半分にしたい）0.5
 		)
