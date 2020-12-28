@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="crt"
+config/name="crt-shader"
 run/main_scene="res://Test.tscn"
 config/icon="res://icon.png"
 
